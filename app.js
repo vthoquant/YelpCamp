@@ -2,6 +2,7 @@ const express = require('express');
 const ejs = require('ejs');
 const path = require('path');
 const mongoose = require('mongoose');
+const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 
@@ -15,6 +16,7 @@ async function mongooseConnect() {
 
 const app = express();
 
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
@@ -32,7 +34,7 @@ app.get('/campgrounds', async(req, res) => {
 app.post('/campgrounds', async(req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
-    res.redirect('/campgrounds');
+    res.redirect(`/campgrounds/${campground._id}`);
 });
 
 app.get('/campgrounds/new', (req, res) => {
